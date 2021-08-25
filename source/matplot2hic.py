@@ -6,9 +6,9 @@ import numpy as np
 import pandas as pd
 import pickle
 import matplotlib.pyplot as plt
-from matrix_plotter import MatrixPlotter
+from .matrix_plotter import MatrixPlotter
 from termcolor import colored
-from shared import  get_bin_size
+from .shared import get_bin_size
 
 
 #   This func is for visualising Predictor results.
@@ -24,7 +24,7 @@ from shared import  get_bin_size
 def MatPlot2HiC(matplot_obj, fname, out_folder, juicer_path=None):
     def Pandas2ChrSizes(chrsizes_filename,
                         pandas_df):  # This func takes all the chromosomes from pandas object, find out their sizes and write into file
-        chromosomes = pandas_df.ix[:, 0].unique()
+        chromosomes = pandas_df.iloc[:, 0].unique()
         chrsizes_table = pd.DataFrame(columns=chromosomes)
 
         for i in range(len(chromosomes)):
@@ -46,7 +46,6 @@ def MatPlot2HiC(matplot_obj, fname, out_folder, juicer_path=None):
     def Pandas2Pre(pre_filename, pandas_df):  # This func makes pre-HiC file from the pandas object, control or data
         pre_file = open(pre_filename, 'w')
         data_rows = pandas_df.shape[0]
-
         pandas_df.columns = ["chr1", "start", "end", "count"]
         pandas_df['str1'] = 0
         assert len(pandas_df.loc[(pandas_df['count'] < 0.000001) & (pandas_df['count'] != 0)]) < (len(pandas_df['count']) / 10)
@@ -103,7 +102,7 @@ def MatPlot2HiC(matplot_obj, fname, out_folder, juicer_path=None):
     #call juicer
     if juicer_path is None:
         juicer_path = os.path.join(os.path.dirname(os.path.abspath(os.path.abspath(__file__))),
-                                   "juicer_tools.jar")
+                                   "juicer_tools_1.22.01.jar")
     cmd =  ['java', '-jar', juicer_path, 'pre', pre_data_filename, hic_data_filename, chromsizes_filename, '-n',
          '-r', binsize]
     print("Running command:")

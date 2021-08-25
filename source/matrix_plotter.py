@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import logging
 import numpy as np
-from shared import get_bin_size
+from .shared import get_bin_size
 
 class MatrixPlotter(): #The class that plot fragments of heatmap
                         #Note - not optimized for large datasets such as whole chromosome
