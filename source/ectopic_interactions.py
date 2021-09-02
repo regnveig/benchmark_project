@@ -12,7 +12,6 @@ class Ectopic_interactions():
 
     def find_ectopic_interactions(self, diag_array, Mut_array):
         ectopic_array = np.zeros_like(Mut_array)
-        print(ectopic_array.shape)
         # ectopic_array = ectopic_array + np.NaN
         percs=[]
         for k,k_array in enumerate(diag_array):
@@ -73,17 +72,13 @@ class Ectopic_interactions():
         data_Mut = np.nan_to_num(data_Mut)
         rearr_start_bin = (rearr_start - capture_start)//cool_WT.binsize
         rearr_end_bin = (rearr_end - capture_start)//cool_WT.binsize
-        print(rearr_start_bin, rearr_end_bin)
         #replace the region of mutation by zero in wt and mut array
-        # print(data_Wt[rearr_start_bin:rearr_end_bin+1, :])
         data_Wt[rearr_start_bin:rearr_end_bin+1, :]=np.zeros(data_Wt[rearr_start_bin:rearr_end_bin+1, :].shape)
         data_Wt[:, rearr_start_bin:rearr_end_bin+1]=np.zeros(data_Wt[:, rearr_start_bin:rearr_end_bin+1].shape)
-        # print(data_Wt[rearr_start_bin:rearr_end_bin+1, rearr_start_bin:rearr_end_bin+1])
         data_Mut[rearr_start_bin:rearr_end_bin+1, :]=np.zeros(data_Mut[rearr_start_bin:rearr_end_bin+1, :].shape)
         data_Mut[:, rearr_start_bin:rearr_end_bin+1]=np.zeros(data_Mut[:, rearr_start_bin:rearr_end_bin+1].shape)
         WT_sum = sum(list(map(sum, data_Wt)))
         Mut_sum=sum(list(map(sum, data_Mut)))
-        # print(WT_sum, Mut_sum)
         if prediction:
             read_coef=1
         else:
@@ -93,9 +88,7 @@ class Ectopic_interactions():
 
         #get dif array of normalized contacts
         diff_array=data_Mut-data_Wt
-        print("prediction", prediction)
-        print("diff array", np.sum(np.isfinite(diff_array)))
-        
+
         # To take into account the genomic distance bias, we normalized
         # the difference matrix by dividing each sub-diagonal by the average wt reads count at its
         # corresponding pairwise genomic distance.
@@ -107,14 +100,12 @@ class Ectopic_interactions():
                 diff_array[X,Y] = diff_array[X,Y] / coeff
                 diff_array[Y,X] = diff_array[X,Y]
        
-        print("diff array", np.sum(np.isfinite(diff_array)))
-        
+
         #find ectopic interactions on diagonals of diff_array
         diff_diags = self.get_all_digonals(diff_array)
         # print("diff diags", np.sum(np.isfinite(diff_diags)))
         np.nan_to_num(diff_diags, copy=False)
         ectopic_array = self.find_ectopic_interactions(diff_diags, data_Mut)
-        print("ectopic array", np.sum(np.isfinite(ectopic_array)))
         if prediction:
              self.diff_sigma_arrays["pred"] = ectopic_array
         else:

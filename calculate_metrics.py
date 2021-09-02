@@ -11,17 +11,17 @@ from source.ectopic_interactions import Ectopic_interactions
 
 rearr_data = pd.read_csv("/mnt/scratch/ws/psbelokopytova/202109061534Polya/benchmark_project/Rearrangements.txt", sep="\t", encoding = "ISO-8859-1")
 base_dir = "/mnt/scratch/ws/psbelokopytova/202109061534Polya/benchmark_project/"
-# rearrs=["Bor"]
-rearrs=["Inv1"]
-# models = ["3DPredictor"]
-models = ["daniel_model"]
+rearrs=["Bor"]
+# rearrs=["Inv1"]
+models = ["3DPredictor"]
+# models = ["daniel_model"]
 binsize = 20000
 # metrics={"plot_juicebox", "create_coolers", }
 # metrics = {"create_coolers"}
 # metrics = {'Pearson_corr'}
 # metrics = {'SCC'}
 # metrics = {'Pearson_corr', 'insulatory_score'}
-metrics = {'ectopic_interactions'}
+metrics = {'insulatory_score','ectopic_interactions'}
 # metrics = {"plot_juicebox", "create_coolers",'Pearson_corr', 'SCC', 'insulatory_score', 'ectopic_interactions'}
 
 for rearr_ID in rearrs:
@@ -92,4 +92,4 @@ for rearr_ID in rearrs:
             ectopic.get_ectopic_interactions_array(input_dir = pred_dir, out_dir = metrics_folder,chr = chr, capture_start = capture_start, capture_end = capture_end, 
                                                     rearr_start=rearr_start, rearr_end = rearr_end, prediction=True)
             metrics_class.ectopic_interactions_precision_recall_curve(ectopic, metrics_folder)
-            #metrics_class.get_n_random_intersections(ectopic, metrics_folder)
+            metrics_class.get_n_random_intersections(ectopic, metrics_folder)

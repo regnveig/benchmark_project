@@ -36,10 +36,12 @@ class Metrics():
     def ectopic_ins_score_precision_recall_curve(self, ins_score_obj, out_dir):
         real = ins_score_obj.diff_sigma_arrays["exp"]
         predicted = ins_score_obj.diff_sigma_arrays["pred"]
+        assert np.sum(np.isfinite(real))==np.sum(np.isfinite(predicted))
+        assert np.sum(np.isfinite(real))==np.sum(np.logical_and(np.isfinite(real), np.isfinite(predicted)))
         sigmas = []
         precisions = []
         recalls =[]
-        for sd in np.arange(0.0, 4.0, 0.1):
+        for sd in np.arange(0.0, 3.2, 0.1):
             condition1_1 = np.logical_or(real < -2, real > 2)
             condition1 = np.logical_and(np.isfinite(real), condition1_1)
             condition2_1 = np.logical_or(predicted < -sd, predicted > sd)
@@ -68,35 +70,21 @@ class Metrics():
 
     def ectopic_interactions_precision_recall_curve(self, ectopic_interactions_obj, out_dir):
         real = ectopic_interactions_obj.diff_sigma_arrays["exp"]
-        print(real)
         predicted = ectopic_interactions_obj.diff_sigma_arrays["pred"]
-        print("!!!!!!!!!!", np.sum(np.isfinite(real)))
-        print("!!!!!!!!!!", np.sum(np.isfinite(predicted)))
-        print("test", np.sum(np.logical_and(np.isfinite(real),np.isfinite(predicted))))
+        assert np.sum(np.isfinite(real))==np.sum(np.isfinite(predicted))
+        assert np.sum(np.isfinite(real))==np.sum(np.logical_and(np.isfinite(real), np.isfinite(predicted)))
         sigmas = []
         precisions = []
         recalls =[]
-        for sd in np.arange(0.0, 3.0, 0.1):
-            print(sd)
-            condition1_1 = np.isfinite(real)
+        for sd in np.arange(0.0, 3.2, 0.1):
             condition1 = np.logical_and(np.isfinite(real), np.logical_or(real < -2, real > 2))
-            print(real[condition1])
-            print(real[condition1].size)
-            condition2_1 = np.logical_or(predicted < -sd, predicted > sd)
             condition2 = np.logical_and(np.logical_or(predicted <= -sd, predicted >= sd), np.isfinite(predicted))
-            print(predicted[condition2])
-            print(predicted[condition2].size)
-
             
             ectopic_overlapped = np.sum(np.logical_and(condition1,condition2))
-            print("overlapped", ectopic_overlapped)
             ectopic_real = np.sum(condition1)
-            print("real", ectopic_real)
             ectopic_predicted = np.sum(condition2)
-            print("predicted", ectopic_predicted)
             precision = ectopic_overlapped/ectopic_predicted
             recall = ectopic_overlapped/ectopic_real
-            print('recall', recall)
             sigmas.append(sd)
             precisions.append(precision)
             recalls.append(recall)
