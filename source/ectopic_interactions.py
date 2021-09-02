@@ -12,9 +12,9 @@ class Ectopic_interactions():
 
     def find_ectopic_interactions(self, diag_array, Mut_array):
         ectopic_array = np.zeros_like(Mut_array)
-        ectopic_array = ectopic_array + np.NaN
+        print(ectopic_array.shape)
+        # ectopic_array = ectopic_array + np.NaN
         percs=[]
-        
         for k,k_array in enumerate(diag_array):
             # print(k)
             # print(k_array)
@@ -89,12 +89,13 @@ class Ectopic_interactions():
         else:
             #normalize mut and WT data by coverage
             read_coef = WT_sum/Mut_sum
-        
         data_Mut=data_Mut*read_coef
 
         #get dif array of normalized contacts
         diff_array=data_Mut-data_Wt
-
+        print("prediction", prediction)
+        print("diff array", np.sum(np.isfinite(diff_array)))
+        
         # To take into account the genomic distance bias, we normalized
         # the difference matrix by dividing each sub-diagonal by the average wt reads count at its
         # corresponding pairwise genomic distance.
@@ -102,14 +103,18 @@ class Ectopic_interactions():
             X = np.array(range(0,len(diff_array)-i))
             Y = np.array(range(i,len(diff_array)))
             coeff = np.average(data_Wt[X,Y])
-            diff_array[X,Y] = diff_array[X,Y] / coeff
-            diff_array[Y,X] = diff_array[X,Y]
-        
+            if coeff!=0:
+                diff_array[X,Y] = diff_array[X,Y] / coeff
+                diff_array[Y,X] = diff_array[X,Y]
+       
+        print("diff array", np.sum(np.isfinite(diff_array)))
         
         #find ectopic interactions on diagonals of diff_array
         diff_diags = self.get_all_digonals(diff_array)
+        # print("diff diags", np.sum(np.isfinite(diff_diags)))
         np.nan_to_num(diff_diags, copy=False)
         ectopic_array = self.find_ectopic_interactions(diff_diags, data_Mut)
+        print("ectopic array", np.sum(np.isfinite(ectopic_array)))
         if prediction:
              self.diff_sigma_arrays["pred"] = ectopic_array
         else:
