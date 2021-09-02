@@ -66,7 +66,7 @@ for i in range(len(diff_array)):
     diff_array[X,Y] = diff_array[X,Y] / coeff
     diff_array[Y,X] = diff_array[X,Y]
 print("diff_array")
-plt.imshow(diff_array, cmap="bwr")
+plt.matshow(np.log(diff_array), cmap="bwr")
 plt.colorbar()
 plt.savefig(dir+"diff_array.png")
 plt.clf()
@@ -104,7 +104,7 @@ print(ectopic_array.shape, np.count_nonzero(~np.isnan(ectopic_array)))
 nonzero = np.nonzero(~np.isnan(ectopic_array))
 print(ectopic_array[nonzero])
 plt.title("ectopic_interactions_real")
-plt.matshow(ectopic_array, cmap="bwr", vmin=-5, vmax=5)
+plt.matshow(ectopic_array, cmap="bwr")#, vmin=-5, vmax=5)
 plt.colorbar()
 plt.savefig(dir+"ectopic_array_real.png")
 plt.clf()

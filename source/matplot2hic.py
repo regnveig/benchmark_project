@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 import pickle
 import matplotlib.pyplot as plt
-from .matrix_plotter import MatrixPlotter
+
 from termcolor import colored
 from .shared import get_bin_size
 

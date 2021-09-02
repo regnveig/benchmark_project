@@ -2,7 +2,17 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import logging
 import numpy as np
+import cooler
+import time
+import os, errno
+import subprocess
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from termcolor import colored
+#import shared
 from .shared import get_bin_size
+from .matplot2hic import MatPlot2HiC
 
 class MatrixPlotter(): #The class that plot fragments of heatmap
                         #Note - not optimized for large datasets such as whole chromosome
@@ -107,3 +117,30 @@ class MatrixPlotter(): #The class that plot fragments of heatmap
             pos.append(curr_pos)
             curr_pos += increment
         return pos,labels
+        
+    # this function prepare data for matplot2hic function and launch this function
+    #
+    #   pred_dir             folder with predicted contacts
+    #   exp_dir              folder with experiment cool files
+    #   out_dir              folder where all the visualisation files are
+    #   conditions           ['WT'] or ['Mut'] or ['WT', 'Mut']
+    #   ----------------------
+    def plot_in_juicebox(self, pred_dir, exp_dir, out_dir, chrom, conditions=["WT", "Mut"]):
+        for cond in conditions:
+            #read predicted contacts
+            predicted_data = pd.read_csv(pred_dir+cond+"/predicted_contacts.txt", sep="\t")
+                #read wt contacts from cool file with C-TALE normalization
+            wt_cool = cooler.Cooler(exp_dir+cond+'/inter.cool')
+            wt_data = wt_cool.matrix(balance=True, as_pixels=True, join=True).fetch(chrom)[:]
+            control_data = pd.DataFrame(data={'chr': wt_data["chrom1"], 'contact_st': wt_data["end1"],
+                                            'contact_en': wt_data["end2"], 'contact_count':wt_data["balanced"]})
+            #merge control data with predicted using only contacts from predicted data                                
+            control_data = pd.merge(predicted_data, control_data, how='left', on=['chr', 'contact_st', 'contact_en'], indicator=True)
+            control_data = control_data[['chr', 'contact_st', 'contact_en','contact_count_y']]
+            control_data.rename(columns={'contact_count_y':'contact_count'}, inplace=True)
+            control_data.fillna(0.0, inplace=True)
+            self.set_data(predicted_data)
+            self.set_control(control_data)
+            #draw contacts in .hic format
+            MatPlot2HiC(self, fname=cond+"_pred_vs_experiment_"+chrom , out_folder=out_dir)
+
