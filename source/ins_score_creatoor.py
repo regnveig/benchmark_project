@@ -43,7 +43,15 @@ class Ins_score():
 
     def get_ectopic_ins_score_array(self, out_dir, window):
         diff_exp_score = self.control_score["Mut"]["sum_balanced_"+str(window)]/self.control_score["WT"]["sum_balanced_"+str(window)]
+        diff_expr_score_to_file = self.control_score["Mut"]
+        diff_expr_score_to_file["sum_balanced_"+str(window)] = diff_exp_score
+        diff_expr_score_to_file["sum_balanced_"+str(window)].fillna(0, inplace=True)
+        diff_expr_score_to_file.to_csv(out_dir+"diff_expr_score.bedgraph", sep="\t", index=False, header=False)
         diff_pred_score = self.predicted_score["Mut"]["sum_balanced_"+str(window)]/self.predicted_score["WT"]["sum_balanced_"+str(window)]
+        diff_pred_score_to_file = self.predicted_score["Mut"]
+        diff_pred_score_to_file["sum_balanced_"+str(window)] = diff_pred_score
+        diff_pred_score_to_file["sum_balanced_"+str(window)].fillna(0, inplace=True)
+        diff_pred_score_to_file.to_csv(out_dir+"diff_pred_score.bedgraph", sep="\t", index=False, header=False)
         diff_ins_score_corr = diff_exp_score.corr(diff_pred_score, method='pearson')
         with open(out_dir+"metrics.txt", 'a') as metrics_file:
             metrics_file.write("Pearson's correlation of predicted VS experiment Mut/WT insulatory score "+"\t"+str(diff_ins_score_corr)+"\n")

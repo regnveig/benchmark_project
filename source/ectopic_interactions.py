@@ -112,8 +112,13 @@ class Ectopic_interactions():
             self.diff_sigma_arrays["exp"] = ectopic_array
         
         #plot ectopic interactions
-        plt.title("ectopic_interactions_real")
-        plt.matshow(ectopic_array, cmap="bwr", vmin=-5, vmax=5)
+        plt.title("ectopic_interactions")
+        ectopic_array_for_plotting = ectopic_array
+        ectopic_array_for_plotting = ectopic_array_for_plotting.astype('float')
+        ectopic_array_for_plotting[np.logical_and(ectopic_array_for_plotting<2, ectopic_array_for_plotting>-2)] = np.nan
+        ectopic_array_for_plotting[ectopic_array_for_plotting==0.0] = np.nan
+        ectopic_array_for_plotting = ectopic_array_for_plotting[150:350, 150:350]
+        plt.matshow(ectopic_array_for_plotting, cmap="bwr", vmin=-8, vmax=8)
         plt.colorbar()
         if prediction:
             png_name = out_dir+"predicted_ectopic_array_all_sigma.png"
