@@ -1,4 +1,4 @@
-__author__ = "regnveig"
+__author__ = "Polina Belokopytova & Emil Viesná"
 __version__ = "0.1b"
 __date__ = "2021 Nov 1"
 
@@ -250,7 +250,7 @@ def CheckHash(Object, key):
 # ------======| PARSER |======------
 
 def CreateParser():
-	Parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter, description=f"BenchmarkPipeline", epilog=f"Email: regnveig@ya.ru")
+	Parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter, description=f"BenchmarkPipeline by {__author__}", epilog=f"Email: regnveig@ya.ru")
 	Parser.add_argument('--version', action='version', version=__version__)
 	
 	Parser.add_argument('-a', '--author', required=True, type=str, help=f"Author ID")
